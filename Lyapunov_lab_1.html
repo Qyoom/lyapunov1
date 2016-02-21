@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Lyapunov lab 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+</head>
+
+<body></body>
+
+<script>
+    var tasks  = ["grocery", "cleaners", "movie", "seafood", "restaurant"];
+    var days   = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
+    var people = ["Mary", "Mike", "Manny", "Maurice", "Mildred"];
+
+    // Diagnostic
+    //for (var i = 0; i < people.length; i++) {
+        //console.log(people[i]);
+    //}
+
+    var globalSchedule = {};
+
+    function scheduleTasks() {
+        var numPeople = people.length;
+        var numDays = days.length;
+        var numTasks = tasks.length;
+        var tasksAvailable = tasks.slice();
+        var daysAvailable = days.slice();
+
+        // Select person and schedule tasks
+        for(var i = 0; i < numPeople; i++) {
+            var personIndex = people.indexOf(_.sample(people));
+            var person = people[personIndex];
+            // Remove person from people
+            people.splice(personIndex, 1);
+
+            // Select task
+            for(var j = 0; j < numTasks; j++) {
+                var taskIndex = tasksAvailable.indexOf(_.sample(tasksAvailable));
+                var task = tasksAvailable[taskIndex];
+                // Remove task from tasks
+                tasksAvailable.splice(taskIndex, 1);
+
+                // Schedule day, only one task per day
+                for(var k = 0; k < numDays; k++) {
+                    var dayIndex = daysAvailable.indexOf(_.sample(daysAvailable));
+                    var day = daysAvailable[dayIndex];
+                    if(noCrowd(task, day)) {
+                        schedule(task, day, person);
+                        break; // task successfully scheduled
+                    }
+                    else {
+                        daysAvailable.splice(dayIndex, 1); // day is crowded for task, try another day.
+                    }
+                }
+            } // end select task
+            tasksAvailable = tasks.slice(); // refresh
+            daysAvailable = days.slice(); // refresh
+        } // end select person
+    } // end scheduleTasks
+
+    function noCrowd(task, day) {
+        result = true; // default
+        if(task in globalSchedule) {
+            for(var i = 0; i < globalSchedule[task].length; i++){
+                if(day in globalSchedule[task][i]){
+                    if(globalSchedule[task][i][day].length > 1){
+                        result = false;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     globalSchedule = {
+        "grocery": [
+            {"Monday": ["Manny", "Mary"]},
+            {"Tuesday": ["Mike"]},
+            {"Thursday": ["Maurice", "Mildred"]}
+        ],
+        "movie": [
+            {"Monday": ["Manny", "Mary"]},
+            {"Tuesday": ["Mike"]},
+            {"Thursday": ["Maurice", "Mildred"]}
+        ],
+        "cleaners": [
+            {"Monday": ["Manny", "Mary"]},
+            {"Tuesday": ["Mike"]},
+            {"Thursday": ["Maurice", "Mildred"]}
+        ]
+     }
+     */
+    function schedule(task, day, person) {
+        if(task in globalSchedule) {
+            var taskDayArray = globalSchedule[task];
+            for(var i = 0, len = taskDayArray.length; i < len; i++) {
+                if(day in taskDayArray[i]) {
+                    var personArray = taskDayArray[i][day];
+                    // for due dilligence I should check if person is already included, but will wait...
+                    personArray.push(person);
+                }
+                else {
+                    var dayPersons = {};
+                    dayPersons[day] = [person];
+                    taskDayArray.push(dayPersons);
+                }
+                break;
+            }
+        }
+        else {
+            var dayPersons = {};
+            dayPersons[day] = [person];
+            globalSchedule[task] = [dayPersons];
+        }
+    }
+
+    // Starts here
+    scheduleTasks();
+    console.log("globalSchedule: " + JSON.stringify(globalSchedule));
+
+</script>
+
+</html>
