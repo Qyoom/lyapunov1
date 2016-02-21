@@ -28,6 +28,7 @@
         var daysAvailable = days.slice();
 
         // Select person and schedule tasks
+        // TODO: Better for people to take random turns than for each to schedule all tasks in one loop cycle.
         for(var i = 0; i < numPeople; i++) {
             var personIndex = people.indexOf(_.sample(people));
             var person = people[personIndex];
