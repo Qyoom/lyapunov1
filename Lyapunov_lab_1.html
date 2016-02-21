@@ -45,7 +45,7 @@
                 for(var k = 0; k < numDays; k++) {
                     var dayIndex = daysAvailable.indexOf(_.sample(daysAvailable));
                     var day = daysAvailable[dayIndex];
-                    if(noCrowd(task, day)){ //&& noMultiTask(day, person)) {
+                    if(noCrowd(task, day)){
                         schedule(task, day, person);
                         daysAvailable = daysAvailable.slice(); // refresh because we may have eliminated multiple crowded days for particular task, but now we're going to new task.
                         daysAvailable.splice(dayIndex, 1); // But remove this day from week because we do only one task per day.
@@ -75,25 +75,7 @@
         return result;
     }
 
-    // function noMultiTask(day, person) {
-    //     result = true; // default
-    //     for (var task in globalSchedule) {
-    //         if (globalSchedule.hasOwnProperty(task)) {
-    //             // loop over task's array of days
-    //             for(var i = 0; i < globalSchedule[task].length; i++){
-    //                 if(day in globalSchedule[task][i]){
-    //                     if(person in globalSchedule[task][i][day]) {
-    //                         result = false;
-    //                         console.log("noMultiTask false for " + person + " on " + day);
-    //                         break;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return result;
-    // }
-
+    // Example:
     /**
      globalSchedule = {
         "grocery": [
