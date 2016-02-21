@@ -94,17 +94,17 @@
      */
     function schedule(task, day, person) {
         if(task in globalSchedule) {
-            var taskDayArray = globalSchedule[task];
-            for(var i = 0, len = taskDayArray.length; i < len; i++) {
-                if(day in taskDayArray[i]) {
-                    var personArray = taskDayArray[i][day];
+            //var taskDayArray = globalSchedule[task];
+            for(var i = 0; i < globalSchedule[task].length; i++) {
+                if(day in globalSchedule[task][i]) {
+                    var personArray = globalSchedule[task][i][day];
                     // for due dilligence I should check if person is already included, but will wait...
                     personArray.push(person);
                 }
                 else {
                     var dayPersons = {};
                     dayPersons[day] = [person];
-                    taskDayArray.push(dayPersons);
+                    globalSchedule[task].push(dayPersons);
                 }
                 break;
             }
